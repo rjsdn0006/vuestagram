@@ -7,15 +7,17 @@
 
     <!-- 필터선택페이지 -->
     <div v-if="step == 1">
-      <div class="upload-image" :style="{backgroundImage:`url('${url}')`}"></div>
+      <div :class="`upload-image ${선택한필터}`" :style="{backgroundImage:`url('${url}')`}"></div>
       <div class="filters">
-        <FilterBox :url="url" :filter="filter[i]" v-for="(item,i) in filter" :key="i"></FilterBox>
+        <FilterBox :url="url" :filter="filter[i]" v-for="(item,i) in filter" :key="i">
+         <span>{{filter[i]}}</span>
+        </FilterBox>
       </div>
     </div>
 
     <!-- 글작성페이지 -->
     <div v-if="step == 2">
-      <div class="upload-image" :style="{backgroundImage:`url('${url}')`}"></div>
+      <div :class="`upload-image ${선택한필터}`" :style="{backgroundImage:`url('${url}')`}"></div>
       <div class="write">
         <textarea @input="$emit('write', $event.target.value)" class="write-box">write!</textarea>
       </div>
@@ -33,7 +35,13 @@ export default {
   data(){
     return{
       filter: filter,
+      선택한필터: "",
     }
+  },
+  mounted(){
+    this.emitter.on('setFilter',(data)=>{
+      this.선택한필터 = data;  
+    });
   },
   components: {
     Post: Post,

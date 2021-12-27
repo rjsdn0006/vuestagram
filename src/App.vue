@@ -5,14 +5,32 @@
     </ul>
     <ul class="header-button-right">
       <li v-if="step == 1" @click="step++">Next</li>
-      <li v-if="step == 2" @click="publish;">발행</li>
+      <li v-if="step == 2" @click="publish">발행</li>
     </ul>
     <img src="./assets/logo.png" class="logo" />
   </div>
 
-  <Container :게시물="게시물" :step="step" :url="url" @write="작성한글 = $event"/>
+  <p>{{ name }}</p>
+  <!-- 
+  <h4>안녕 {{ $store.state.name }}</h4>
+  <button @click="$store.commit('nameChange')">버튼</button>
+  <p>{{ $store.state.age }}</p>
+  <button @click="$store.commit('updateAge', 10)">나이버튼</button>
 
-  <button @click="more">더보기</button>
+  <p>{{ $store.state.more }}</p>
+  <button @click="$store.dispatch('getData')">더보기버튼</button> -->
+
+  <Container
+    :게시물="게시물"
+    :step="step"
+    :url="url"
+    @write="작성한글 = $event"
+  />
+
+  <!-- <button @click="more">더보기</button> -->
+
+  <p>{{ now2 }} {{ 카운터 }}</p>
+  <button @click="카운터++">버튼</button>
 
   <div class="footer">
     <ul class="footer-button-plus">
@@ -26,6 +44,7 @@
 import Container from "./components/Container.vue";
 import data from "./assets/data.js";
 import axios from "axios";
+import {mapMutations, mapState} from 'vuex';
 
 export default {
   name: "App",
@@ -38,10 +57,29 @@ export default {
       더보기: 0,
       step: 0,
       url: "",
-      작성한글: '',
+      작성한글: "",
+      선택한필터: "",
+      카운터: 0,
     };
   },
+  mounted() {
+    this.emitter.on("setFilter", (data) => {
+      //data에는 filter명이 저장되어 있다.
+      this.선택한필터 = data;
+    });
+  },
+  computed: {
+    now2() {
+      return new Date();
+    },
+    name() {
+      return this.$store.state.name;
+    },
+    ...mapState(['name', 'age', 'Likes']),
+    ...mapState({ 작명:'name'}),
+  },
   methods: {
+    ...mapMutations(['setMore','addLikes']),
     more() {
       axios
         .get(`https://codingapple1.github.io/vue/more${this.더보기}.json`)
@@ -65,10 +103,13 @@ export default {
         date: "May 15",
         liked: false,
         content: this.작성한글,
-        filter: "perpetua",
+        filter: this.선택한필터,
       };
       this.게시물.unshift(내게시물);
-      this.step = 0; 
+      this.step = 0;
+    },
+    now() {
+      return new Date();
     },
   },
 };

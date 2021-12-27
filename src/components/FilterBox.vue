@@ -1,14 +1,21 @@
 <template>
-  <div :class="`filter-item ${filter}`" :style="`background-image:url(${url})`"></div>
+  <div @click="fire" :class="`filter-item ${filter}`" :style="`background-image:url(${url})`">
+    <slot></slot>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'FilterBox',
+  name: "FilterBox",
   props: {
-     url: String,
-     filter: String,
-  }
+    url: String,
+    filter: String,
+  },
+  methods: {
+    fire(){
+      this.emitter.emit('setFilter',this.filter) // 다른 컴포넌트로 데이터 보내주는 법 
+    },
+  },
 };
 </script>
 
